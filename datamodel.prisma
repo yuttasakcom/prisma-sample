@@ -1,19 +1,41 @@
 type User {
   id: ID! @id
-  comments: [Comment!]!
-    @relation(name: "CommentAuthor", onDelete: CASCADE, link: INLINE)
-  blog: Blog @relation(name: "BlogOwner", onDelete: CASCADE, link: INLINE)
+  name: String!
+  posts: [Post!]! @relation(link: INLINE, name: "PostToUser", onDelete: CASCADE)
+  comments: [Comment]
+    @relation(link: INLINE, name: "CommentToUser", onDelete: CASCADE)
+  replies: [Reply]
+    @relation(link: INLINE, name: "ReplyToUser", onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
-type Blog {
+type Post {
   id: ID! @id
-  comments: [Comment!]!
-    @relation(name: "Comments", onDelete: CASCADE, link: INLINE)
-  owner: User @relation(name: "BlogOwner", onDelete: SET_NULL)
+  text: String!
+  author: User @relation(name: "PostToUser", onDelete: SET_NULL)
+  comments: [Comment]
+    @relation(link: INLINE, name: "CommentToPost", onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Comment {
   id: ID! @id
-  blog: Blog! @relation(name: "Comments", onDelete: SET_NULL)
-  author: User @relation(name: "CommentAuthor", onDelete: SET_NULL)
+  text: String!
+  post: Post @relation(name: "CommentToPost", onDelete: SET_NULL)
+  author: User @relation(name: "CommentToUser", onDelete: SET_NULL)
+  replies: [Reply]
+    @relation(link: INLINE, name: "ReplyToComment", onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Reply {
+  id: ID! @id
+  text: String!
+  comment: Comment @relation(name: "ReplyToComment", onDelete: SET_NULL)
+  author: User @relation(name: "ReplyToUser", onDelete: SET_NULL)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
