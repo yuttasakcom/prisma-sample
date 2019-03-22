@@ -1,0 +1,19 @@
+type User {
+  id: ID! @id
+  comments: [Comment!]!
+    @relation(name: "CommentAuthor", onDelete: CASCADE, link: INLINE)
+  blog: Blog @relation(name: "BlogOwner", onDelete: CASCADE, link: INLINE)
+}
+
+type Blog {
+  id: ID! @id
+  comments: [Comment!]!
+    @relation(name: "Comments", onDelete: CASCADE, link: INLINE)
+  owner: User @relation(name: "BlogOwner", onDelete: SET_NULL)
+}
+
+type Comment {
+  id: ID! @id
+  blog: Blog! @relation(name: "Comments", onDelete: SET_NULL)
+  author: User @relation(name: "CommentAuthor", onDelete: SET_NULL)
+}
